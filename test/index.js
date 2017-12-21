@@ -9,7 +9,7 @@ test('turtler', (t) => {
     try {
       turtler('hi');
       t.fail('should not be able to format strings');
-    } catch(ex) {
+    } catch (ex) {
       t.equal(ex.message, 'data should be an array of arrays');
       t.end();
     }
@@ -17,9 +17,11 @@ test('turtler', (t) => {
 
   t.test('should throw on value that isn\'t an array of arrays', (t) => {
     try {
-      turtler([['hi'], 'nope nope nope']);
+      turtler([
+        ['hi'], 'nope nope nope'
+      ]);
       t.fail('should not be able to format strings as row values');
-    } catch(ex) {
+    } catch (ex) {
       t.equal(ex.message, 'data should be an array of arrays');
       t.end();
     }
@@ -27,9 +29,14 @@ test('turtler', (t) => {
 
   t.test('should throw on column values that are not strings', (t) => {
     try {
-      turtler([['hi'], [{ hi: 'world' }]]);
+      turtler([
+        ['hi'],
+        [{
+          hi: 'world'
+        }]
+      ]);
       t.fail('should not be able to format objects as column values');
-    } catch(ex) {
+    } catch (ex) {
       t.equal(ex.message, 'column values should be strings');
       t.end();
     }
@@ -44,7 +51,7 @@ test('turtler', (t) => {
       ]);
       t.equal(table, 'uid | name \n===========\n1   | Doe  \n2   | Hemma\n');
       t.end();
-    } catch(ex) {
+    } catch (ex) {
       t.fail(ex);
     }
   });
@@ -61,7 +68,7 @@ test('turtler', (t) => {
       });
       t.equal(table, 'uid name \n1   Doe  \n2   Hemma\n');
       t.end();
-    } catch(ex) {
+    } catch (ex) {
       t.fail(ex);
     }
   });
@@ -78,7 +85,7 @@ test('turtler', (t) => {
 
       t.equal(table, '1 Doe  \n2 Hemma\n');
       t.end();
-    } catch(ex) {
+    } catch (ex) {
       t.fail(ex);
     }
   });

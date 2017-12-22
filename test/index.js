@@ -91,11 +91,11 @@ test('turtler', (t) => {
   });
 
   t.throws((t) => {
-      turtler([
-        ["uid", "name"],
-        ["1", "Doe"],
-        ["2", "Hemma", "Errorneous input"]
-      ]);
-      t.end();
+    turtler([
+      ["uid", "name"],
+      ["1", "Doe"],
+      ["2", "Hemma", "Errorneous input"]
+    ]);
+    t.end();
   }, 'should throw error for mismatching column length');
 });

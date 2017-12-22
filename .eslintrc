@@ -11,6 +11,11 @@
       "error",
       "always"
     ],
-    "no-octal": 0
+    "no-octal": 0,
+    "indent": [
+      "error",
+      2
+    ],
+    "no-trailing-spaces": "error"
   }
 }

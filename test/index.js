@@ -3,7 +3,7 @@ const test = require('tape');
 const turtler = require('../index');
 
 test('turtler', (t) => {
-  t.plan(7);
+  t.plan(8);
 
   t.test('should throw on value that isn\'t an array of arrays', (t) => {
     try {
@@ -41,8 +41,9 @@ test('turtler', (t) => {
         ["uid", "name"],
         ["1", "Doe"],
         ["2", "Hemma"]
-      ]).ascii;
-      t.equal(table, 'uid | name \n===========\n1   | Doe  \n2   | Hemma\n');
+      ]);
+      t.equal(table.ascii, 'uid | name \n===========\n1   | Doe  \n2   | Hemma\n');
+      t.equal(table.markdown, '|uid|name|\n|-|-|\n|1|Doe|\n|2|Hemma|\n');
       t.end();
     } catch(ex) {
       t.fail(ex);
@@ -58,8 +59,9 @@ test('turtler', (t) => {
       ], {
         headerSeparator: '',
         columnSeparator: ' '
-      }).ascii;
-      t.equal(table, 'uid name \n1   Doe  \n2   Hemma\n');
+      });
+      t.equal(table.ascii, 'uid name \n1   Doe  \n2   Hemma\n');
+      t.equal(table.markdown, '|uid|name|\n|-|-|\n|1|Doe|\n|2|Hemma|\n');
       t.end();
     } catch(ex) {
       t.fail(ex);
@@ -74,9 +76,25 @@ test('turtler', (t) => {
       ], {
         hasHeader: false,
         columnSeparator: ' '
-      }).ascii;
-
-      t.equal(table, '1 Doe  \n2 Hemma\n');
+      });
+      t.equal(table.ascii, '1 Doe  \n2 Hemma\n');
+      t.equal(table.markdown, '| | |\n|-|-|\n|1|Doe|\n|2|Hemma|\n');
+      t.end();
+    } catch(ex) {
+      t.fail(ex);
+    }
+  });
+  t.test('should be able to state that there is no header separator', (t) => {
+    try {
+      let table = turtler([
+        ["uid", "name"],
+        ["1", "Doe"],
+        ["2", "Hemma"]
+      ], {
+        hasHeader: true,
+        columnSeparator: ' '
+      });
+      t.equal(table.markdown, '|uid|name|\n|-|-|\n|1|Doe|\n|2|Hemma|\n');
       t.end();
     } catch(ex) {
       t.fail(ex);

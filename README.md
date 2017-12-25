@@ -12,8 +12,10 @@
 
 ## Installation
 
-```
-npm install turtler --save
+```bash
+
+    npm install turtler --save
+
 ```
 
 ## Usage
@@ -21,24 +23,34 @@ npm install turtler --save
 > the given options are the defaults
 
 ```javascript
-let table = turtler([
-  ["uid", "name"],
-  ["1", "Doe"],
-  ["2", "Hemma"]
-], {
-  hasHeader: true,
-  columnSeperator: ' | ',
-  headerSeperator: '='
-});
 
-console.log(table);
+    let table = turtler([
+    ["uid", "name"],
+    ["1", "Doe"],
+    ["2", "Hemma"]
+    ], {
+    hasHeader: true,
+    columnSeperator: ' | ',
+    headerSeperator: '='
+    });
+
+    console.log(table.ascii);
+    console.log(table.markdown);
+
 ```
 
 This will yield:
 
-```
-uid | name
-===========
-1   | Doe  
-2   | Hemma
+```bash
+
+    uid | name
+    ===========
+    1   | Doe
+    2   | Hemma
+
+    |uid|name|
+    |-|-|
+    |1|Doe|
+    |2|Hemma|
+
 ```

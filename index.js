@@ -15,6 +15,7 @@ module.exports = function turtler(data, options={}) {
   if(!Array.isArray(data)) throw new Error('data should be an array of arrays');
 
   let asciiTable = '';
+  let markdownTable = '';
   let columns = 0;
   let columnWidths = [];
   let { hasHeader=true, columnSeparator=' | ', headerSeparator='=' } = options;
@@ -42,6 +43,8 @@ module.exports = function turtler(data, options={}) {
   });
 
   data.forEach((row, l) => {
+    markdownTable += `|${row.join('|')}|\n`;
+
     row = row.map((value, i) => {
       // Create pad of empty spaces to match the width of this value to max width of this column
       let padding = ' '.repeat(columnWidths[i] - value.length);
@@ -50,15 +53,24 @@ module.exports = function turtler(data, options={}) {
     }).join(columnSeparator);
 
     asciiTable += `${row}\n`;
+
     if(l === 0) {
       // ignore the header string if hasHeader is false or headerSeparator is not set
-      if(!hasHeader || !headerSeparator) return;
+
+      if(!hasHeader) { // for markdown
+        markdownTable = '|' + ' |'.repeat(columns) + '\n' + '|' + '-|'.repeat(columns) + '\n' + markdownTable;
+      } else if (!headerSeparator) { // for markdown
+        markdownTable += '|' + '-|'.repeat(columns) + '\n';
+      }
+
+      if(!hasHeader || !headerSeparator) { return; } // for ascii
 
       // we add columnSeparator.length because above we joined on that string which could be more than one character.
       // We only want one character so we only look at the first character of the string
       asciiTable += headerSeparator[0].repeat((columnWidths.reduce((a, b) => a + b)) + columnSeparator.length) + '\n';
+      markdownTable += '|' + '-|'.repeat(columns) + '\n';
     }
   });
 
-  return { ascii: asciiTable };
+  return { ascii: asciiTable, markdown: markdownTable };
 };

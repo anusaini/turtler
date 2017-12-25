@@ -6,12 +6,15 @@
  * @param  {Boolean} options.hasHeader - this will determine if the table data has a header or not, by default this is true
  * @param  {String}  options.columnSeparator - the default separators is ' | '
  * @param  {String}  options.headerSeparator - the default header separators is '=', this value should only be one character
- * @return {String} - a string that represents the ascii table of the data provided
+ * @return {Object} - { ascii - a string that represents the ascii table of the data provided,
+ *                      html - a provided html version of table,
+ *                      table - html <table> table,
+ *                      markdown - a markdown table }
  */
 module.exports = function turtler(data, options={}) {
   if(!Array.isArray(data)) throw new Error('data should be an array of arrays');
 
-  let table = '';
+  let asciiTable = '';
   let columns = 0;
   let columnWidths = [];
   let { hasHeader=true, columnSeparator=' | ', headerSeparator='=' } = options;
@@ -46,16 +49,16 @@ module.exports = function turtler(data, options={}) {
     // join on the columnSeparator
     }).join(columnSeparator);
 
-    table += `${row}\n`;
+    asciiTable += `${row}\n`;
     if(l === 0) {
       // ignore the header string if hasHeader is false or headerSeparator is not set
       if(!hasHeader || !headerSeparator) return;
 
       // we add columnSeparator.length because above we joined on that string which could be more than one character.
       // We only want one character so we only look at the first character of the string
-      table += headerSeparator[0].repeat((columnWidths.reduce((a, b) => a + b)) + columnSeparator.length) + '\n';
+      asciiTable += headerSeparator[0].repeat((columnWidths.reduce((a, b) => a + b)) + columnSeparator.length) + '\n';
     }
   });
 
-  return table;
+  return { ascii: asciiTable };
 };

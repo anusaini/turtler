@@ -41,7 +41,7 @@ test('turtler', (t) => {
         ["uid", "name"],
         ["1", "Doe"],
         ["2", "Hemma"]
-      ]);
+      ]).ascii;
       t.equal(table, 'uid | name \n===========\n1   | Doe  \n2   | Hemma\n');
       t.end();
     } catch(ex) {
@@ -58,7 +58,7 @@ test('turtler', (t) => {
       ], {
         headerSeparator: '',
         columnSeparator: ' '
-      });
+      }).ascii;
       t.equal(table, 'uid name \n1   Doe  \n2   Hemma\n');
       t.end();
     } catch(ex) {
@@ -74,7 +74,7 @@ test('turtler', (t) => {
       ], {
         hasHeader: false,
         columnSeparator: ' '
-      });
+      }).ascii;
 
       t.equal(table, '1 Doe  \n2 Hemma\n');
       t.end();

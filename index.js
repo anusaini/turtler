@@ -86,6 +86,7 @@ class Turtler {
     let table = '';
     let columns = 0;
     let columnWidths = [];
+    const splitter = ' | ';
 
     // Find the maximum width of each column
     // If rows contain uneven number of columns, throw
@@ -110,14 +111,17 @@ class Turtler {
     });
 
     // make the rows nice and tidy giving enough space on all sides to make it uniform
-    data.forEach((row) => {
+    data.forEach((row, rowIndex) => {
       row = row.map((value, i) => {
         // Create pad of empty spaces to match the width of this value to max width of this column
         return value + ' '.repeat(columnWidths[i] - value.length);
       // join on the pipe which denotes the border of a table element in markdown
-      }).join(' | ');
+      }).join(splitter);
 
       table += `| ${row} |\n`;
+      if(rowIndex === 0) {
+          table += '|' + '-|'.repeat(row.split(splitter).length) + '\n';
+      }
     });
 
     return table;

@@ -62,6 +62,14 @@ This will yield:
 
 ```
 | uid | name  |
+|-|-|
 | 1   | Doe   |
 | 2   | Hemma |
 ```
+
+And looks like when rendered:
+
+| uid | name  |
+|-|-|
+| 1   | Doe   |
+| 2   | Hemma |

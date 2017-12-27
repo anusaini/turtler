@@ -25,55 +25,57 @@ class Turtler {
    * @return {String} - ascii table
    */
   ascii() {
-    const { data, hasHeader, columnSeparator, headerSeparator } = this;
+    if(!this.asciiTable) {
+      const { data, hasHeader, columnSeparator, headerSeparator } = this;
 
-    let table = '';
-    let columns = 0;
-    let columnWidths = [];
+      let table = '';
+      let columns = 0;
+      let columnWidths = [];
 
-    // Find the maximum width of each column
-    // If rows contain uneven number of columns, throw
-    data.forEach((row) => {
-      // The row should be an array
-      if(!Array.isArray(row)) throw new Error('data should be an array of arrays');
-      // Set the initial length of the row
-      if(!columns) columns = row.length;
-      // If the current row is not the same length as the initial one throw error
-      if(columns !== row.length) throw new Error('columns are not formed properly');
+      // Find the maximum width of each column
+      // If rows contain uneven number of columns, throw
+      data.forEach((row) => {
+        // The row should be an array
+        if(!Array.isArray(row)) throw new Error('data should be an array of arrays');
+        // Set the initial length of the row
+        if(!columns) columns = row.length;
+        // If the current row is not the same length as the initial one throw error
+        if(columns !== row.length) throw new Error('columns are not formed properly');
 
-      // find the maximum length of each column
-      row.forEach((v, l) => {
-        // column values must be strings
-        if(typeof v !== 'string') throw new Error('column values should be strings');
+        // find the maximum length of each column
+        row.forEach((v, l) => {
+          // column values must be strings
+          if(typeof v !== 'string') throw new Error('column values should be strings');
 
-        // Find the maximum string length in each column
-        if(!columnWidths[l] || columnWidths[l] < v.length) {
-          columnWidths[l] = v.length;
+          // Find the maximum string length in each column
+          if(!columnWidths[l] || columnWidths[l] < v.length) {
+            columnWidths[l] = v.length;
+          }
+        });
+      });
+
+      data.forEach((row, l) => {
+        row = row.map((value, i) => {
+          // Create pad of empty spaces to match the width of this value to max width of this column
+          let padding = ' '.repeat(columnWidths[i] - value.length);
+          return value + padding;
+        // join on the columnSeparator
+        }).join(columnSeparator);
+
+        table += `${row}\n`;
+
+        if(l === 0) {
+          // ignore the header string if hasHeader is false or headerSeparator is not set
+          if(!hasHeader || !headerSeparator) return;
+
+          // we add columnSeparator.length because above we joined on that string which could be more than one character.
+          // We only want one character so we only look at the first character of the string
+          table += headerSeparator[0].repeat((columnWidths.reduce((a, b) => a + b)) + columnSeparator.length) + '\n';
         }
       });
-    });
-
-    data.forEach((row, l) => {
-      row = row.map((value, i) => {
-        // Create pad of empty spaces to match the width of this value to max width of this column
-        let padding = ' '.repeat(columnWidths[i] - value.length);
-        return value + padding;
-      // join on the columnSeparator
-      }).join(columnSeparator);
-
-      table += `${row}\n`;
-
-      if(l === 0) {
-        // ignore the header string if hasHeader is false or headerSeparator is not set
-        if(!hasHeader || !headerSeparator) return;
-
-        // we add columnSeparator.length because above we joined on that string which could be more than one character.
-        // We only want one character so we only look at the first character of the string
-        table += headerSeparator[0].repeat((columnWidths.reduce((a, b) => a + b)) + columnSeparator.length) + '\n';
-      }
-    });
-
-    return table;
+      this.asciiTable = table;
+    }
+    return this.asciiTable;
   }
   /**
    * renders a markdown table
@@ -81,50 +83,53 @@ class Turtler {
    * @return {String} markdown table string
    */
   markdown() {
-    const { data } = this;
+    if(!this.markdownTable) {
+      const { data } = this;
 
-    let table = '';
-    let columns = 0;
-    let columnWidths = [];
-    const splitter = ' | ';
+      let table = '';
+      let columns = 0;
+      let columnWidths = [];
+      const splitter = ' | ';
 
-    // Find the maximum width of each column
-    // If rows contain uneven number of columns, throw
-    data.forEach((row) => {
-      // The row should be an array
-      if(!Array.isArray(row)) throw new Error('data should be an array of arrays');
-      // Set the initial length of the row
-      if(!columns) columns = row.length;
-      // If the current row is not the same length as the initial one throw error
-      if(columns !== row.length) throw new Error('columns are not formed properly');
+      // Find the maximum width of each column
+      // If rows contain uneven number of columns, throw
+      data.forEach((row) => {
+        // The row should be an array
+        if(!Array.isArray(row)) throw new Error('data should be an array of arrays');
+        // Set the initial length of the row
+        if(!columns) columns = row.length;
+        // If the current row is not the same length as the initial one throw error
+        if(columns !== row.length) throw new Error('columns are not formed properly');
 
-      // find the maximum length of each column
-      row.forEach((v, l) => {
-        // column values must be strings
-        if(typeof v !== 'string') throw new Error('column values should be strings');
+        // find the maximum length of each column
+        row.forEach((v, l) => {
+          // column values must be strings
+          if(typeof v !== 'string') throw new Error('column values should be strings');
 
-        // Find the maximum string length in each column
-        if(!columnWidths[l] || columnWidths[l] < v.length) {
-          columnWidths[l] = v.length;
+          // Find the maximum string length in each column
+          if(!columnWidths[l] || columnWidths[l] < v.length) {
+            columnWidths[l] = v.length;
+          }
+        });
+      });
+
+      // make the rows nice and tidy giving enough space on all sides to make it uniform
+      data.forEach((row, rowIndex) => {
+        row = row.map((value, i) => {
+          // Create pad of empty spaces to match the width of this value to max width of this column
+          return value + ' '.repeat(columnWidths[i] - value.length);
+        // join on the pipe which denotes the border of a table element in markdown
+        }).join(splitter);
+
+        table += `| ${row} |\n`;
+        if(rowIndex === 0) {
+            table += '|' + '-|'.repeat(row.split(splitter).length) + '\n';
         }
       });
-    });
 
-    // make the rows nice and tidy giving enough space on all sides to make it uniform
-    data.forEach((row, rowIndex) => {
-      row = row.map((value, i) => {
-        // Create pad of empty spaces to match the width of this value to max width of this column
-        return value + ' '.repeat(columnWidths[i] - value.length);
-      // join on the pipe which denotes the border of a table element in markdown
-      }).join(splitter);
-
-      table += `| ${row} |\n`;
-      if(rowIndex === 0) {
-          table += '|' + '-|'.repeat(row.split(splitter).length) + '\n';
-      }
-    });
-
-    return table;
+      this.markdownTable = table;
+    }
+    return this.markdownTable;
   }
   /**
    * renders the data to an ascii table string

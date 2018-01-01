@@ -1,5 +1,3 @@
-const constants = require('./constants');
-
 class Turtler {
   /**
    * will turn an array matrix into a table
@@ -14,7 +12,12 @@ class Turtler {
   constructor(data, options={}) {
     if(!Array.isArray(data)) throw new Error('data should be an array of arrays');
 
-    let { hasHeader=constants.hasHeaderDefault, columnSeparator=constants.columnSeparatorDefault, headerSeparator=constants.headerSeparatorDefault, htmlSeparators=constants.htmlSeparatorsDefault } = options;
+    let { hasHeader=true, columnSeparator=' | ', headerSeparator='=', htmlSeparators={
+      rowStart: '<div class="table row">',
+      rowEnd: '</div>',
+      columnStart: '<span class="table column">',
+      columnEnd: '</span>'
+    }} = options;
 
     this.data = data;
     this.hasHeader = hasHeader;
@@ -121,7 +124,7 @@ class Turtler {
         // Create pad of empty spaces to match the width of this value to max width of this column
         return value + ' '.repeat(columnWidths[i] - value.length);
       // join on the pipe which denotes the border of a table element in markdown
-      }).join(constants.columnSeparatorDefault);
+      }).join(' | ');
 
       table += `| ${row} |\n`;
 
@@ -129,9 +132,9 @@ class Turtler {
         // we add the header with the width of the column minus the addition of a pipe symbol
         table += columnWidths.map((width, i) => {
           if(i == 0) {
-            return '|' + constants.markdownHeaderSeparotrDefault.repeat(width + 2) + '|';
+            return '|' + '-'.repeat(width + 2) + '|';
           }
-          return constants.markdownHeaderSeparotrDefault.repeat(width + 2) + '|';
+          return '-'.repeat(width + 2) + '|';
         }).join('') + '\n';
       }
     });
@@ -143,39 +146,38 @@ class Turtler {
    * @return {String} - html table
    */
   html() {
-    if (!this.htmlTable) {
-      const { data, htmlSeparators } = this;
+    if (this.htmlTable) return this.htmlTable;
+    
+    const { data, htmlSeparators } = this;
 
-      let table = '';
-      let columns = 0;
+    let table = '';
+    let columns = 0;
 
-      // Find the maximum width of each column
-      // If rows contain uneven number of columns, throw
-      data.forEach((row) => {
-        // The row should be an array
-        if(!Array.isArray(row)) throw new Error('data should be an array of arrays');
-        // Set the initial length of the row
-        if(!columns) columns = row.length;
-        // If the current row is not the same length as the initial one throw error
-        if(columns !== row.length) throw new Error('columns are not formed properly');
+    // Find the maximum width of each column
+    // If rows contain uneven number of columns, throw
+    data.forEach((row) => {
+    // The row should be an array
+    if(!Array.isArray(row)) throw new Error('data should be an array of arrays');
+    // Set the initial length of the row
+    if(!columns) columns = row.length;
+    // If the current row is not the same length as the initial one throw error
+    if(columns !== row.length) throw new Error('columns are not formed properly');
 
-        // find the maximum length of each column
-        row.forEach((v) => {
-          // column values must be strings
-          if(typeof v !== 'string') throw new Error('column values should be strings');
-        });
-      });
+    // find the maximum length of each column
+    row.forEach((v) => {
+        // column values must be strings
+        if(typeof v !== 'string') throw new Error('column values should be strings');
+    });
+    });
 
-      data.forEach((row) => {
-        row = row.map((value) => {
-          return `${htmlSeparators.columnStart}${value}${htmlSeparators.columnEnd}`;
-        }).join('');
+    data.forEach((row) => {
+    row = row.map((value) => {
+        return `${htmlSeparators.columnStart}${value}${htmlSeparators.columnEnd}`;
+    }).join('');
 
-        table += `${htmlSeparators.rowStart}${row}${htmlSeparators.rowEnd}`;
-      });
-      this.htmlTable = table;
-    }
-    return this.htmlTable;
+    table += `${htmlSeparators.rowStart}${row}${htmlSeparators.rowEnd}`;
+    });
+    return this.htmlTable = table;
   }
   /**
    * renders the data to an ascii table string
